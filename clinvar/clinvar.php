@@ -114,12 +114,31 @@ class ClinVarParser extends Bio2RDFizer
     {
       $xml = new CXML($ldir,$infile);
       
-      while($xml->parse("ClinVarAssertion") == TRUE) {
+      while($xml->parse("ClinVarSet") == TRUE) {
         
         if(isset($this->id_list) and count($this->id_list) == 0) break;
-        $y = $xml->GetXMLRoot();
-        var_dump($y);
-        // $this->parse_clinvar_assertion($xml);
+        $xml_root = $xml->GetXMLRoot();
+        $id = $xml->GetAttributeValue($xml_root,'ID'); //ID of ClinVarSet
+        $title = $xml_root->{"Title"};
+        $record_status = $xml_root->{"RecordStatus"};
+
+        $rcva_node = $xml_root->ReferenceClinVarAssertion; //ReferenceClinVarAssertion node
+          $rcva_date_created = $xml->GetAttributeValue($rcva_node,'DateCreated');
+          $rcva_record_status = $rcva_node->{"RecordStatus"};
+
+          $cva_node = $rcva_node->ClinVarAccession; //ClinVarAccession node
+            $cva_acc = $xml->GetAttributeValue($cva_node,'Acc');
+            $cva_version = $xml->GetAttributeValue($cva_node,'Version');
+            $cva_type = $xml->GetAttributeValue($cva_node,'Type');
+            $cva_date_updated = $xml->GetAttributeValue($cva_node,'DateUpdated');
+
+          $clin_sig_node = $rcva_node->ClinicalSignificance; //Clinical Significance node
+            $clin_sig_last_eval = $xml->GetAttributeValue($clin_sig_node,'DateLastEvaluated');
+            $clin_sig_review_status = $clin_sig_node->{'ReviewStatus'};
+            $clin_sig_desc = $clin_sig_node->{'Description'};
+        echo $clin_sig_desc."\n";
+
+        
 
       }
       unset($xml);
