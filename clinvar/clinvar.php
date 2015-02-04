@@ -136,7 +136,54 @@ class ClinVarParser extends Bio2RDFizer
             $clin_sig_last_eval = $xml->GetAttributeValue($clin_sig_node,'DateLastEvaluated');
             $clin_sig_review_status = $clin_sig_node->{'ReviewStatus'};
             $clin_sig_desc = $clin_sig_node->{'Description'};
-        echo $clin_sig_desc."\n";
+
+          $assertion_node = $rcva_node->Assertion;
+            $assertion = $xml->GetAttributeValue($assertion_node,'Type');
+
+          $attribute_set_node = $rcva_node->AttributeSet; //Atribute Set node
+            $attribute_node = $attribute_set_node->Attribute;
+            if($attribute_node!=NULL) {
+              $attribute = $attribute_node->{'Attribute'};
+              $attribute_int_value = $xml->GetAttributeValue($attribute_node,'integerValue');
+              // var_dump($attribute_node);
+        //echo $attribute."\n";
+            }
+          $observed_in_node = $rcva_node->ObservedIn;
+            $sample_node = $observed_in_node->Sample;
+              $sample_origin = $sample_node->Origin;
+              $species = $sample_node->Species;
+              $species_taxonomyId = $xml->GetAttributeValue($species,'TaxonomyId');
+              $affected_status = $sample_node->AffectedStatus;
+            $method_node = $observed_in_node->Method;
+              $method_purpose = $method_node->{'Purpose'};
+              $method_type = $method_node->{'MethodType'};
+            $observed_data_node = $observed_in_node->ObservedData;
+              $observed_data_id = $xml->GetAttributeValue($observed_data_node,'ID');
+              $observed_data_attr = $observed_data_node->Attribute;
+              $observed_data_attr_integerValue = $xml->GetAttributeValue($observed_data_attr,'integerValue');
+              $observed_data_attr_type = $xml->GetAttributeValue($observed_data_attr,'Type');
+              
+          $measureset_node = $rcva_node->MeasureSet;
+          $measureset_type = $xml->GetAttributeValue($measureset_node,'Type');
+          $measureset_id = $xml->GetAttributeValue($measureset_node,'ID');
+            $measure = $measureset_node->Measure;
+            $measure_type = $xml->GetAttributeValue($measure,'Type');
+            $measure_id = $xml->GetAttributeValue($measure,'ID');
+              $measure_name = $measure->Name;
+                $measure_name_elementvalue = $measure_name->ElementValue;
+                $measure_name_type = $xml->GetAttributeValue($measure_name_elementvalue,'Type');
+              $measure_attributeset = $measure->AttributeSet;
+                $measure_attribute = $measure_attributeset->Attribute;
+                if($measure_attribute != NULL) {
+                  $measure_attribute_type = $xml->GetAttributeValue($measure_attribute,'Type');
+                }
+              $measure_cytogeneticloc = $measure->CytogeneticLocation;
+
+              
+              echo $measure_cytogeneticloc;
+
+
+
 
         
 
