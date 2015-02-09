@@ -120,75 +120,118 @@ class ClinVarParser extends Bio2RDFizer
         $xml_root = $xml->GetXMLRoot();
         $id = $xml->GetAttributeValue($xml_root,'ID'); //ID of ClinVarSet
         $title = $xml_root->{"Title"};
+        // $file = fopen($id.".txt","w");
         $record_status = $xml_root->{"RecordStatus"};
 
         $rcva_node = $xml_root->ReferenceClinVarAssertion; //ReferenceClinVarAssertion node
           $rcva_date_created = $xml->GetAttributeValue($rcva_node,'DateCreated');
           $rcva_record_status = $rcva_node->{"RecordStatus"};
 
-          $cva_node = $rcva_node->ClinVarAccession; //ClinVarAccession node
-            $cva_acc = $xml->GetAttributeValue($cva_node,'Acc');
-            $cva_version = $xml->GetAttributeValue($cva_node,'Version');
-            $cva_type = $xml->GetAttributeValue($cva_node,'Type');
-            $cva_date_updated = $xml->GetAttributeValue($cva_node,'DateUpdated');
+          // $cva_node = $rcva_node->ClinVarAccession; //ClinVarAccession node
+          //   $cva_acc = $xml->GetAttributeValue($cva_node,'Acc');
+          //   $cva_version = $xml->GetAttributeValue($cva_node,'Version');
+          //   $cva_type = $xml->GetAttributeValue($cva_node,'Type');
+          //   $cva_date_updated = $xml->GetAttributeValue($cva_node,'DateUpdated');
 
-          $clin_sig_node = $rcva_node->ClinicalSignificance; //Clinical Significance node
-            $clin_sig_last_eval = $xml->GetAttributeValue($clin_sig_node,'DateLastEvaluated');
-            $clin_sig_review_status = $clin_sig_node->{'ReviewStatus'};
-            $clin_sig_desc = $clin_sig_node->{'Description'};
+          // $clin_sig_node = $rcva_node->ClinicalSignificance; //Clinical Significance node
+          //   $clin_sig_last_eval = $xml->GetAttributeValue($clin_sig_node,'DateLastEvaluated');
+          //   $clin_sig_review_status = $clin_sig_node->{'ReviewStatus'};
+          //   $clin_sig_desc = $clin_sig_node->{'Description'};
 
           $assertion_node = $rcva_node->Assertion;
             $assertion = $xml->GetAttributeValue($assertion_node,'Type');
 
           $attribute_set_node = $rcva_node->AttributeSet; //Atribute Set node
-            $attribute_node = $attribute_set_node->Attribute;
+            $attribute_node = $attribute_set_node->Attribute; //Example : "Autosomal unknown"
             if($attribute_node!=NULL) {
               $attribute = $attribute_node->{'Attribute'};
+              $attribute_type = $xml->GetAttributeValue($attribute_node, 'Type'); //Example : ModeOfInheritance
               $attribute_int_value = $xml->GetAttributeValue($attribute_node,'integerValue');
-              // var_dump($attribute_node);
-        //echo $attribute."\n";
+          
             }
-          $observed_in_node = $rcva_node->ObservedIn;
-            $sample_node = $observed_in_node->Sample;
-              $sample_origin = $sample_node->Origin;
-              $species = $sample_node->Species;
-              $species_taxonomyId = $xml->GetAttributeValue($species,'TaxonomyId');
-              $affected_status = $sample_node->AffectedStatus;
-            $method_node = $observed_in_node->Method;
-              $method_purpose = $method_node->{'Purpose'};
-              $method_type = $method_node->{'MethodType'};
-            $observed_data_node = $observed_in_node->ObservedData;
-              $observed_data_id = $xml->GetAttributeValue($observed_data_node,'ID');
-              $observed_data_attr = $observed_data_node->Attribute;
-              $observed_data_attr_integerValue = $xml->GetAttributeValue($observed_data_attr,'integerValue');
-              $observed_data_attr_type = $xml->GetAttributeValue($observed_data_attr,'Type');
+          // $observed_in_node = $rcva_node->ObservedIn;
+          //   $sample_node = $observed_in_node->Sample;
+          //     $sample_origin = $sample_node->Origin;
+          //     $species = $sample_node->Species;
+          //     $species_taxonomyId = $xml->GetAttributeValue($species,'TaxonomyId');
+          //     $affected_status = $sample_node->AffectedStatus;
+          //   $method_node = $observed_in_node->Method;
+          //     $method_purpose = $method_node->{'Purpose'};
+          //     $method_type = $method_node->{'MethodType'};
+          //   $observed_data_node = $observed_in_node->ObservedData;
+          //     $observed_data_id = $xml->GetAttributeValue($observed_data_node,'ID');
+          //     $observed_data_attr = $observed_data_node->Attribute;
+          //     $observed_data_attr_integerValue = $xml->GetAttributeValue($observed_data_attr,'integerValue');
+          //     $observed_data_attr_type = $xml->GetAttributeValue($observed_data_attr,'Type');
               
           $measureset_node = $rcva_node->MeasureSet;
-          $measureset_type = $xml->GetAttributeValue($measureset_node,'Type');
-          $measureset_id = $xml->GetAttributeValue($measureset_node,'ID');
+          $measureset_type = $xml->GetAttributeValue($measureset_node,'Type'); //Example : Variant
+          $measureset_id = $xml->GetAttributeValue($measureset_node,'ID'); 
             $measure = $measureset_node->Measure;
-            $measure_type = $xml->GetAttributeValue($measure,'Type');
+            $measure_type = $xml->GetAttributeValue($measure,'Type'); //Example : single nucleotide variant
             $measure_id = $xml->GetAttributeValue($measure,'ID');
               $measure_name = $measure->Name;
-                $measure_name_elementvalue = $measure_name->ElementValue;
+                $measure_name_elementvalue = $measure_name->ElementValue; //Example : p.Ser524_Leu525insPro
                 $measure_name_type = $xml->GetAttributeValue($measure_name_elementvalue,'Type');
               $measure_attributeset = $measure->AttributeSet;
-                $measure_attribute = $measure_attributeset->Attribute;
+                $measure_attribute = $measure_attributeset->Attribute; //Example : p.Ser524_Leu525insPro
                 if($measure_attribute != NULL) {
-                  $measure_attribute_type = $xml->GetAttributeValue($measure_attribute,'Type');
+                  $measure_attribute_type = $xml->GetAttributeValue($measure_attribute,'Type'); //Example : HGVS, protein
                 }
               $measure_cytogeneticloc = $measure->CytogeneticLocation;
+              $measure_relationship = $measure->MeasureRelationship;
+                $measure_relationship_type = $xml->GetAttributeValue($measure_relationship,'Type'); //Example: Variant in gene
+                $measure_relationship_name = $measure_relationship->Name;
+                  $measure_relationship_name_elementvalue = $measure_relationship_name->ElementValue; //Example: ALMS2
+                  if($measure_relationship_name_elementvalue!=NULL) {
+                    $measure_relationship_name_elementvalue_type = $xml->GetAttributeValue($measure_relationship_name_elementvalue,'Type'); //Example: Prefered
+                  }
+                $measure_relationship_symbol = $measure_relationship->Symbol;
+                  $symbol_elementvalue = $measure_relationship_symbol->ElementValue;
+                  if($measure_relationship->SequenceLocation != NULL) {
+                    $measure_relationship_sequencelocation = $measure_relationship->SequenceLocation;
+                if($measure_relationship_sequencelocation!=NULL) {
+                  $sequence_location_assembly = $xml->GetAttributeValue($measure_relationship_sequencelocation,'Assembly');
+                  $sequence_location_display_stop = $xml->GetAttributeValue($measure_relationship_sequencelocation,'display_stop');
+                  $sequence_location_display_start = $xml->GetAttributeValue($measure_relationship_sequencelocation,'display_start');
+                  $sequence_location_chr = $xml->GetAttributeValue($measure_relationship_sequencelocation,'Chr');
+                  $sequence_location_accession = $xml->GetAttributeValue($measure_relationship_sequencelocation,'Accession'); //Example : NC_000002.12
+                  $sequence_location_start = $xml->GetAttributeValue($measure_relationship_sequencelocation,'start');
+                  $sequence_location_stop = $xml->GetAttributeValue($measure_relationship_sequencelocation,'stop');
+                  $sequence_location_strand = $xml->GetAttributeValue($measure_relationship_sequencelocation,'Strand');      
+                }
+                  foreach($measure_relationship->XRef as $xrefel) {
+                  $xref_id = $xml->GetAttributeValue($xrefel,"ID");
+                  $xref_db = $xml->GetAttributeValue($xrefel,"DB");
+                    // var_dump($xref_id.' '.$xref_db);
+                    // var_dump($xrefel);
+                  }
+          $traitset_node = $rcva_node->TraitSet; //TraitSet node        
+            $traitset_type=$xml->GetAttributeValue($traitset_node,"Type");
+            $traitset_id=$xml->GetAttributeValue($traitset_node,"ID");
+              $traitset_trait_node = $traitset_node->Trait; //Attention : cas où il y en a plusieurs
+              $trait_type=$xml->GetAttributeValue($traitset_trait_node,"Type");
+              $trait_id=$xml->GetAttributeValue($traitset_trait_node,"ID");
+                $trait_name_node=$traitset_trait_node->Name;
+                 $trait_name=$traitset_name_node->ElementValue;
+                 foreach($trait_name_node->XRef as $xrefname) {
+                  $xref_id = $xml->GetAttributeValue($xrefname,"ID");
+                  $xref_db = $xml->GetAttributeValue($xrefname,"DB");
+                    // var_dump($xref_id.' '.$xref_db);
+                    // var_dump($xrefname);
+                  }
+              $trait_name_symbol->$traitset_trait_node->Symbol->ElementValue;
 
-              
-              echo $measure_cytogeneticloc;
-
-
-
-
+                  
+                 // fwrite($file,$measure_relationship_name_elementvalue.' '.$sequence_location_assembly.' '.$xref_db.' '.$xref_id."\n");
+                 // fclose($file);
         
+                  }
+                
 
       }
       unset($xml);
+      
     }
 
     function parse_clinvar_assertion(&$xml) {
