@@ -117,10 +117,15 @@ class ClinVarParser extends Bio2RDFizer
       while($xml->parse("ClinVarSet") == TRUE) {
         
         if(isset($this->id_list) and count($this->id_list) == 0) break;
+        $file_content="";
         $xml_root = $xml->GetXMLRoot();
         $id = $xml->GetAttributeValue($xml_root,'ID'); //ID of ClinVarSet
+        $file_content.="ID :".$id."\n";
         $title = $xml_root->{"Title"};
-        // $file = fopen($id.".txt","w");
+        $file_content.="Title :".$title."\n";
+
+        $file = fopen($id.".txt","w");
+        
         $record_status = $xml_root->{"RecordStatus"};
 
         $rcva_node = $xml_root->ReferenceClinVarAssertion; //ReferenceClinVarAssertion node
@@ -139,13 +144,15 @@ class ClinVarParser extends Bio2RDFizer
           //   $clin_sig_desc = $clin_sig_node->{'Description'};
 
           $assertion_node = $rcva_node->Assertion;
-            $assertion = $xml->GetAttributeValue($assertion_node,'Type');
+            $assertion = $xml->GetAttributeValue($assertion_node,'Type'); //Example : Variation to disease
+            $file_content.="Type of assertion : ".$assertion."\n";
 
           $attribute_set_node = $rcva_node->AttributeSet; //Atribute Set node
             $attribute_node = $attribute_set_node->Attribute; //Example : "Autosomal unknown"
             if($attribute_node!=NULL) {
               $attribute = $attribute_node->{'Attribute'};
               $attribute_type = $xml->GetAttributeValue($attribute_node, 'Type'); //Example : ModeOfInheritance
+              $file_content.=$attribute_type." : ".$assertion."\n";
               $attribute_int_value = $xml->GetAttributeValue($attribute_node,'integerValue');
           
             }
@@ -199,10 +206,17 @@ class ClinVarParser extends Bio2RDFizer
                   $sequence_location_start = $xml->GetAttributeValue($measure_relationship_sequencelocation,'start');
                   $sequence_location_stop = $xml->GetAttributeValue($measure_relationship_sequencelocation,'stop');
                   $sequence_location_strand = $xml->GetAttributeValue($measure_relationship_sequencelocation,'Strand');      
+                  
+                $file_content.="Chromosome : ".$sequence_location_chr."\n";
+                $file_content.="Sequence assembly : ".$sequence_location_assembly."\n";
+                $file_content.="Chromosome accession : ".$sequence_location_accession."\n";
                 }
+                
+                
                   foreach($measure_relationship->XRef as $xrefel) {
                   $xref_id = $xml->GetAttributeValue($xrefel,"ID");
                   $xref_db = $xml->GetAttributeValue($xrefel,"DB");
+                  $file_content.=$xref_db.": ".$xref_id."\n";
                     // var_dump($xref_id.' '.$xref_db);
                     // var_dump($xrefel);
                   }
@@ -212,19 +226,23 @@ class ClinVarParser extends Bio2RDFizer
               $traitset_trait_node = $traitset_node->Trait; //Attention : cas où il y en a plusieurs
               $trait_type=$xml->GetAttributeValue($traitset_trait_node,"Type");
               $trait_id=$xml->GetAttributeValue($traitset_trait_node,"ID");
+              $file_content.="Trait : ".$trait_id.", de type ".$trait_type."\n";
+
                 $trait_name_node=$traitset_trait_node->Name;
                  $trait_name=$traitset_name_node->ElementValue;
                  foreach($trait_name_node->XRef as $xrefname) {
                   $xref_id = $xml->GetAttributeValue($xrefname,"ID");
                   $xref_db = $xml->GetAttributeValue($xrefname,"DB");
+                  $file_content.=$xref_db.": ".$xref_id."\n";
+
                     // var_dump($xref_id.' '.$xref_db);
                     // var_dump($xrefname);
                   }
               $trait_name_symbol->$traitset_trait_node->Symbol->ElementValue;
-
-                  
-                 // fwrite($file,$measure_relationship_name_elementvalue.' '.$sequence_location_assembly.' '.$xref_db.' '.$xref_id."\n");
-                 // fclose($file);
+                $file_content.="Symbole du trait : ".$trait_name_symbol;
+                 
+                 fwrite($file,$file_content."\n");
+                 fclose($file);
         
                   }
                 
