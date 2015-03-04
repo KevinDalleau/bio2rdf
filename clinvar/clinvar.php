@@ -21,7 +21,7 @@ class ClinVarParser extends Bio2RDFizer
 
   function Run()
   {
-    $file         = "ClinVar.xml";
+    $file         = "clinvar_exemple.xml";
     $indir        = parent::getParameterValue('indir');
     $outdir       = parent::getParameterValue('outdir');
     $download_url = parent::getParameterValue('download_url');
@@ -44,7 +44,7 @@ class ClinVarParser extends Bio2RDFizer
     parent::setReadFile($lfile);
     parent::setWriteFile($outdir.$ofile, $gz);
     echo "processing $file... ";
-    $this->process();
+    //$this->process();
     echo "done!".PHP_EOL;
     parent::getWriteFile()->close();
 
@@ -98,17 +98,24 @@ class ClinVarParser extends Bio2RDFizer
       parent::getWriteFile()->write($dataset_description);
       parent::getWriteFile()->close();
     }
-    function process() {
+    // function process() {
       
       
-      parent::AddRDF(
-      parent::describeIndividual($this->getNamespace().'2', 'clinlabel', parent::getVoc().'clinvarparent')
-      //parent::triplify($this->getNamespace().'2', $this->getVoc().'sequence-individual', 'clinvar:sequence_length')
-        );
+    //   parent::AddRDF(
+    //   //parent::describeIndividual($this->getNamespace().'2', 'clinlabel', parent::getVoc().'clinvarparent')
+    //   //parent::triplify($this->getNamespace().'2', $this->getVoc().'sequence-individual', 'clinvar:sequence_length')
+      
+    //                 parent::describeIndividual($id, $title, parent::getVoc()."ClinVar").
+    //                 parent::triplify($id, parent::getVoc()."title", $title)         
 
-    $this->WriteRDFBufferToWriteFile();
 
-    }
+                 
+    //     );
+
+    // $this->WriteRDFBufferToWriteFile();
+    // contiue;
+
+    // }
 
     function parse_clinvar($ldir,$infile)
     {
@@ -124,7 +131,7 @@ class ClinVarParser extends Bio2RDFizer
         $title = $xml_root->{"Title"};
         $file_content.="Title :".$title."\n";
 
-        $file = fopen($id.".txt","w");
+        //$file = fopen($id.".txt","w");
         
         $record_status = $xml_root->{"RecordStatus"};
 
@@ -132,16 +139,16 @@ class ClinVarParser extends Bio2RDFizer
           $rcva_date_created = $xml->GetAttributeValue($rcva_node,'DateCreated');
           $rcva_record_status = $rcva_node->{"RecordStatus"};
 
-          // $cva_node = $rcva_node->ClinVarAccession; //ClinVarAccession node
-          //   $cva_acc = $xml->GetAttributeValue($cva_node,'Acc');
-          //   $cva_version = $xml->GetAttributeValue($cva_node,'Version');
-          //   $cva_type = $xml->GetAttributeValue($cva_node,'Type');
-          //   $cva_date_updated = $xml->GetAttributeValue($cva_node,'DateUpdated');
+          $cva_node = $rcva_node->ClinVarAccession; //ClinVarAccession node
+            $cva_acc = $xml->GetAttributeValue($cva_node,'Acc');
+            $cva_version = $xml->GetAttributeValue($cva_node,'Version');
+            $cva_type = $xml->GetAttributeValue($cva_node,'Type');
+            $cva_date_updated = $xml->GetAttributeValue($cva_node,'DateUpdated');
 
-          // $clin_sig_node = $rcva_node->ClinicalSignificance; //Clinical Significance node
-          //   $clin_sig_last_eval = $xml->GetAttributeValue($clin_sig_node,'DateLastEvaluated');
-          //   $clin_sig_review_status = $clin_sig_node->{'ReviewStatus'};
-          //   $clin_sig_desc = $clin_sig_node->{'Description'};
+          $clin_sig_node = $rcva_node->ClinicalSignificance; //Clinical Significance node
+            $clin_sig_last_eval = $xml->GetAttributeValue($clin_sig_node,'DateLastEvaluated');
+            $clin_sig_review_status = $clin_sig_node->{'ReviewStatus'};
+            $clin_sig_desc = $clin_sig_node->{'Description'};
 
           $assertion_node = $rcva_node->Assertion;
             $assertion = $xml->GetAttributeValue($assertion_node,'Type'); //Example : Variation to disease
@@ -230,19 +237,45 @@ class ClinVarParser extends Bio2RDFizer
 
                 $trait_name_node=$traitset_trait_node->Name;
                  $trait_name=$traitset_name_node->ElementValue;
-                 foreach($trait_name_node->XRef as $xrefname) {
-                  $xref_id = $xml->GetAttributeValue($xrefname,"ID");
-                  $xref_db = $xml->GetAttributeValue($xrefname,"DB");
-                  $file_content.=$xref_db.": ".$xref_id."\n";
-
-                    // var_dump($xref_id.' '.$xref_db);
-                    // var_dump($xrefname);
-                  }
+                 $trait_ref_array = array();
+                 
               $trait_name_symbol->$traitset_trait_node->Symbol->ElementValue;
                 $file_content.="Symbole du trait : ".$trait_name_symbol;
+                    parent::AddRDF(
+      //parent::describeIndividual($this->getNamespace().'2', 'clinlabel', parent::getVoc().'clinvarparent')
+      //parent::triplify($this->getNamespace().'2', $this->getVoc().'sequence-individual', 'clinvar:sequence_length')
+      
+                    parent::describeIndividual("clinvar:".$cva_acc, $title, parent::getVoc()."clinvar").
+                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."title", $$measure_name).
+                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."assertion", $assertion).
+                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."gene_symbol", $symbol_elementvalue).
+                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."gene_accession", $sequence_location_accession).
+                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."chromosome", $sequence_location_chr).
+                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."sequence_assembly", $sequence_location_assembly).
+                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."trait", $trait_name)
+                    
+                   // parent::triplifyString("clinvar:".$id, parent::getVoc()."trait", $trait_name_symbol)
+                   // parent::triplifyString("clinvar:".$id, parent::getVoc()."trait", $trait_name_symbol)
+
+
+
                  
-                 fwrite($file,$file_content."\n");
-                 fclose($file);
+        );
+        foreach($trait_name_node->XRef as $xrefname) {
+                  $xref_id = $xml->GetAttributeValue($xrefname,"ID");
+                  $xref_db = $xml->GetAttributeValue($xrefname,"DB");
+                  parent::AddRDF(
+                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."trait_source", $xref_db.": ".$xref_id)
+                  );
+                  
+                  };
+
+    $this->WriteRDFBufferToWriteFile();
+    continue;
+
+
+                 // fwrite($file,$file_content."\n");
+                 // fclose($file);
         
                   }
                 
