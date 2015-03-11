@@ -236,23 +236,27 @@ class ClinVarParser extends Bio2RDFizer
               $file_content.="Trait : ".$trait_id.", de type ".$trait_type."\n";
 
                 $trait_name_node=$traitset_trait_node->Name;
-                 $trait_name=$traitset_name_node->ElementValue;
+                 $trait_name=$trait_name_node->ElementValue;
                  $trait_ref_array = array();
                  
               $trait_name_symbol->$traitset_trait_node->Symbol->ElementValue;
                 $file_content.="Symbole du trait : ".$trait_name_symbol;
+
                     parent::AddRDF(
       //parent::describeIndividual($this->getNamespace().'2', 'clinlabel', parent::getVoc().'clinvarparent')
       //parent::triplify($this->getNamespace().'2', $this->getVoc().'sequence-individual', 'clinvar:sequence_length')
       
-                    parent::describeIndividual("clinvar:".$cva_acc, $title, parent::getVoc()."clinvar").
-                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."title", $$measure_name).
+                    parent::describeIndividual("clinvar:".$cva_acc, $title, parent::getVoc()."variant").
+                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."title", $measure_name).
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."assertion", $assertion).
+                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."clinical_significance", $clin_sig_desc).
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."gene_symbol", $symbol_elementvalue).
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."gene_accession", $sequence_location_accession).
+                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."cytogenetic_location", $cytogenetic_location).
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."chromosome", $sequence_location_chr).
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."sequence_assembly", $sequence_location_assembly).
-                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."trait", $trait_name)
+                    parent::describeIndividual("clinvar:".$trait_name, $trait_name, parent::getVoc()."Phenotype").
+                    parent::triplify("clinvar:".$cva_acc,parent::getVoc()."Variant_Phenotype","clinvar:".$trait_name)
                     
                    // parent::triplifyString("clinvar:".$id, parent::getVoc()."trait", $trait_name_symbol)
                    // parent::triplifyString("clinvar:".$id, parent::getVoc()."trait", $trait_name_symbol)
