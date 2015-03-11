@@ -223,11 +223,9 @@ class ClinVarParser extends Bio2RDFizer
                   foreach($measure_relationship->XRef as $xrefel) {
                   $xref_id = $xml->GetAttributeValue($xrefel,"ID");
                   $xref_db = $xml->GetAttributeValue($xrefel,"DB");
-                  if($xref_db=='OMIM') {
                     parent::AddRDF(
-                       parent::triplifyString("clinvar:".$symbol_elementvalue, parent::getVoc()."x-omim", $xref_id)
+                       parent::triplifyString("clinvar:".$symbol_elementvalue, parent::getVoc()."x-".$xref_db, $xref_id)
                     );
-                  }
                   $file_content.=$xref_db.": ".$xref_id."\n";
                     // var_dump($xref_id.' '.$xref_db);
                     // var_dump($xrefel);
