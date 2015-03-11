@@ -276,7 +276,7 @@ class ClinVarParser extends Bio2RDFizer
                   $xref_id = $xml->GetAttributeValue($xrefname,"ID");
                   $xref_db = $xml->GetAttributeValue($xrefname,"DB");
                   parent::AddRDF(
-                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."x-".$xref_db, $xref_id)
+                    parent::triplifyString("clinvar:".$trait_name, parent::getVoc()."x-".$xref_db, $xref_id)
                   );
                   
                   };
