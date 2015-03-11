@@ -252,6 +252,7 @@ class ClinVarParser extends Bio2RDFizer
                     parent::describeIndividual("clinvar:".$cva_acc, $title, parent::getVoc()."variant").
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."title", $measure_name).
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."assertion", $assertion).
+                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."mutation", $measure_name_elementvalue).
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."clinical_significance", $clin_sig_desc).
                     parent::describeIndividual("clinvar:".$trait_name, $trait_name, parent::getVoc()."Phenotype").
                     parent::triplify("clinvar:".$cva_acc,parent::getVoc()."Variant_Phenotype","clinvar:".$trait_name).
