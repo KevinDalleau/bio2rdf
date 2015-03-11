@@ -250,15 +250,15 @@ class ClinVarParser extends Bio2RDFizer
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."title", $measure_name).
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."assertion", $assertion).
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."clinical_significance", $clin_sig_desc).
-                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."gene_symbol", $symbol_elementvalue).
-                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."gene_accession", $sequence_location_accession).
-                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."cytogenetic_location", $cytogenetic_location).
-                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."chromosome", $sequence_location_chr).
-                    parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."sequence_assembly", $sequence_location_assembly).
                     parent::describeIndividual("clinvar:".$trait_name, $trait_name, parent::getVoc()."Phenotype").
                     parent::triplify("clinvar:".$cva_acc,parent::getVoc()."Variant_Phenotype","clinvar:".$trait_name).
                     parent::describeIndividual("clinvar:".$symbol_elementvalue, $symbol_elementvalue, parent::getVoc()."Gene").
+                    parent::triplifyString("clinvar:".$symbol_elementvalue, parent::getVoc()."gene_accession", $sequence_location_accession).
+                    parent::triplifyString("clinvar:".$symbol_elementvalue, parent::getVoc()."cytogenetic_location", $cytogenetic_location).
+                    parent::triplifyString("clinvar:".$symbol_elementvalue, parent::getVoc()."chromosome", $sequence_location_chr).
+                    parent::triplifyString("clinvar:".$symbol_elementvalue, parent::getVoc()."sequence_assembly", $sequence_location_assembly).
                     parent::triplify("clinvar:".$cva_acc,parent::getVoc()."Variant_Gene","clinvar:".$symbol_elementvalue)
+
                     
                    // parent::triplifyString("clinvar:".$id, parent::getVoc()."trait", $trait_name_symbol)
                    // parent::triplifyString("clinvar:".$id, parent::getVoc()."trait", $trait_name_symbol)
