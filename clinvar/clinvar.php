@@ -223,10 +223,15 @@ class ClinVarParser extends Bio2RDFizer
                   foreach($measure_relationship->XRef as $xrefel) {
                   $xref_id = $xml->GetAttributeValue($xrefel,"ID");
                   $xref_db = $xml->GetAttributeValue($xrefel,"DB");
+                  if($xref_db=='OMIM') {
+                    parent::AddRDF(
+                       parent::triplifyString("clinvar:".$symbol_elementvalue, parent::getVoc()."x-omim", $xref_id)
+                    );
+                  }
                   $file_content.=$xref_db.": ".$xref_id."\n";
                     // var_dump($xref_id.' '.$xref_db);
                     // var_dump($xrefel);
-                  }
+                  };
           $traitset_node = $rcva_node->TraitSet; //TraitSet node        
             $traitset_type=$xml->GetAttributeValue($traitset_node,"Type");
             $traitset_id=$xml->GetAttributeValue($traitset_node,"ID");
@@ -259,6 +264,7 @@ class ClinVarParser extends Bio2RDFizer
                     parent::triplifyString("clinvar:".$symbol_elementvalue, parent::getVoc()."sequence_assembly", $sequence_location_assembly).
                     parent::triplify("clinvar:".$cva_acc,parent::getVoc()."Variant_Gene","clinvar:".$symbol_elementvalue)
 
+
                     
                    // parent::triplifyString("clinvar:".$id, parent::getVoc()."trait", $trait_name_symbol)
                    // parent::triplifyString("clinvar:".$id, parent::getVoc()."trait", $trait_name_symbol)
@@ -267,6 +273,7 @@ class ClinVarParser extends Bio2RDFizer
 
                  
         );
+        
         foreach($trait_name_node->XRef as $xrefname) {
                   $xref_id = $xml->GetAttributeValue($xrefname,"ID");
                   $xref_db = $xml->GetAttributeValue($xrefname,"DB");
