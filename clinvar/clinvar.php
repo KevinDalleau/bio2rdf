@@ -253,7 +253,7 @@ class ClinVarParser extends Bio2RDFizer
       //parent::describeIndividual($this->getNamespace().'2', 'clinlabel', parent::getVoc().'clinvarparent')
       //parent::triplify($this->getNamespace().'2', $this->getVoc().'sequence-individual', 'clinvar:sequence_length')
       
-                    parent::describeIndividual("clinvar:".$cva_acc, $title, parent::getVoc()."variant").
+                    parent::describeIndividual("clinvar:".$cva_acc, $title, parent::getVoc()."Variant").
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."title", $measure_name).
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."assertion", $assertion).
                     parent::triplifyString("clinvar:".$cva_acc, parent::getVoc()."mutation", $measure_name_elementvalue).
@@ -282,9 +282,10 @@ class ClinVarParser extends Bio2RDFizer
                   $xref_db = $xml->GetAttributeValue($xrefname,"DB");
                   $from = array("&gt;","&lt;",">","<","'");
                   $to = array("","","","","");
-                  $xref_db_escaped = preg_replace("/\s/","_",str_replace($from,$to,$xref_db));
+                  $xref_db_escaped = utf8_encode(preg_replace("/\s/","_",str_replace($from,$to,$xref_db)));
+                  $xfref_db_low = strtolower($xref_db_escaped);
                   parent::AddRDF(
-                    parent::triplifyString("clinvar:".$trait_name_escaped, parent::getVoc()."x-".$xref_db_escaped, $xref_id)
+                    parent::triplify("clinvar:".$trait_name_escaped, parent::getVoc()."x-".$xfref_db_low, $xref_id)
                   );
                   
                   };
