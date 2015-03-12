@@ -246,7 +246,8 @@ class ClinVarParser extends Bio2RDFizer
                 $file_content.="Symbole du trait : ".$trait_name_symbol;
                     $from = array("&gt;","&lt;",">","<","'");
                     $to = array("","","","","");
-                    $trait_name_escaped = str_replace($from,$to,$trait_name);
+                    $trait_name_escaped = preg_replace("/\s/","_",str_replace($from,$to,$trait_name));
+
 
                     parent::AddRDF(
       //parent::describeIndividual($this->getNamespace().'2', 'clinlabel', parent::getVoc().'clinvarparent')
@@ -279,8 +280,11 @@ class ClinVarParser extends Bio2RDFizer
         foreach($trait_name_node->XRef as $xrefname) {
                   $xref_id = $xml->GetAttributeValue($xrefname,"ID");
                   $xref_db = $xml->GetAttributeValue($xrefname,"DB");
+                  $from = array("&gt;","&lt;",">","<","'");
+                  $to = array("","","","","");
+                  $xref_db_escaped = preg_replace("/\s/","_",str_replace($from,$to,$xref_db));
                   parent::AddRDF(
-                    parent::triplifyString("clinvar:".$trait_name_escaped, parent::getVoc()."x-".$xref_db, $xref_id)
+                    parent::triplifyString("clinvar:".$trait_name_escaped, parent::getVoc()."x-".$xref_db_escaped, $xref_id)
                   );
                   
                   };
