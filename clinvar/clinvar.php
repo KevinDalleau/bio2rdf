@@ -228,7 +228,8 @@ class ClinVarParser extends Bio2RDFizer
                   $xref_dbgene_escaped = utf8_encode(preg_replace("/\s/","_",str_replace($from,$to,$xref_db)));
                   $xref_dbgene_low = strtolower($xref_dbgene_escaped);
                     parent::AddRDF(
-                       parent::triplifyString("clinvar:".$symbol_elementvalue, parent::getVoc()."x-".$xref_dbgene_low, $xref_id)
+                       parent::describeIndividual($xref_dbgene_low.":".$xref_id, $xref_id, parent::getVoc()."x-".$xref_dbgene_low).
+                       parent::triplify("clinvar:".$symbol_elementvalue, parent::getVoc()."x-".$xref_dbgene_low, $xref_dbgene_low.":".$xref_id)
                     );
                   $file_content.=$xref_db.": ".$xref_id."\n";
                     // var_dump($xref_id.' '.$xref_db);
@@ -288,9 +289,10 @@ class ClinVarParser extends Bio2RDFizer
                   $from = array("&gt;","&lt;",">","<","'");
                   $to = array("","","","","");
                   $xref_db_escaped = utf8_encode(preg_replace("/\s/","_",str_replace($from,$to,$xref_db)));
-                  $xfref_db_low = strtolower($xref_db_escaped);
+                  $xref_db_low = strtolower($xref_db_escaped);
                   parent::AddRDF(
-                    parent::triplify("clinvar:".$trait_name_low, parent::getVoc()."x-".$xfref_db_low, $xref_id)
+                    parent::describeIndividual($xref_db_low.":".$xref_id, $xref_id, parent::getVoc()."x-".$xref_db_low).
+                    parent::triplify("clinvar:".$trait_name, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id)
                   );
                   
                   };
