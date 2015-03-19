@@ -22,7 +22,7 @@ class ClinVarParser extends Bio2RDFizer
 
   function Run()
   {
-    $file         = "clinvar_exemple.xml";
+    $file         = "ClinVar.xml";
     $indir        = parent::getParameterValue('indir');
     $outdir       = parent::getParameterValue('outdir');
     $download_url = parent::getParameterValue('download_url');
@@ -261,9 +261,11 @@ foreach($trait_name_node->XRef as $xrefname) {
   $to = array("","","","","");
   $xref_db_escaped = utf8_encode(preg_replace("/\s/","_",str_replace($from,$to,$xref_db)));
   $xref_db_low = strtolower($xref_db_escaped);
+  $xref_id_escaped = utf8_encode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
+  $xref_id_low = strtolower($xref_id_escaped);
   parent::AddRDF(
-    parent::describeIndividual($xref_db_low.":".$xref_id, $xref_id, parent::getVoc()."x-".$xref_db_low).
-    parent::triplify("clinvar:".$trait_name, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id)
+    parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
+    parent::triplify("clinvar:".$trait_name_low, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id_low)
     );
 
 };
