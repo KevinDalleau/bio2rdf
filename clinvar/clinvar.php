@@ -192,7 +192,6 @@
                             $xref_db_low = strtolower($xref_db_escaped);
                             $xref_id_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
                             $xref_id_low = strtolower($xref_id_escaped);
-                            // var_dump($xref_id_low);
                             parent::AddRDF(
                               parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
                               parent::triplify("clinvar:".$symbol_elementvalue, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id_low)
@@ -284,7 +283,6 @@
     $xref_db_low = strtolower($xref_db_escaped);
     $xref_id_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
     $xref_id_low = strtolower($xref_id_escaped);
-    var_dump($xref_id_low);
     parent::AddRDF(
       parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
       parent::triplify("clinvar:".$trait_name_low, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id_low)
@@ -309,7 +307,6 @@
               $xref_db_low = strtolower($xref_db_escaped);
               $xref_id_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
               $xref_id_low = strtolower($xref_id_escaped);
-              // var_dump($xref_id_low);
               parent::AddRDF(
                 parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
                 parent::triplify("clinvar:".$symbol_elementvalue, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id_low)
