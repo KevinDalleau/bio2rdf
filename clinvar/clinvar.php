@@ -1,4 +1,4 @@
-  <?php
+<?php
 
 
   /**
@@ -111,7 +111,7 @@
           $id = $xml->GetAttributeValue($xml_root,'ID'); //ID of ClinVarSet
           $file_content.="ID :".$id."\n";
           $title = $xml_root->{"Title"};
-          $file_content.="Title :".$title."\n";          
+          $file_content.="Title :".$title."\n";
           $record_status = $xml_root->{"RecordStatus"};
 
           $rcva_node = $xml_root->ReferenceClinVarAssertion; //ReferenceClinVarAssertion node
@@ -143,7 +143,7 @@
 
             $measureset_node = $rcva_node->MeasureSet;
             $measureset_type = $xml->GetAttributeValue($measureset_node,'Type'); //Example : Variant
-            $measureset_id = $xml->GetAttributeValue($measureset_node,'ID'); 
+            $measureset_id = $xml->GetAttributeValue($measureset_node,'ID');
             $measure = $measureset_node->Measure;
               $measure_type = $xml->GetAttributeValue($measure,'Type'); //Example : single nucleotide variant
               $measure_id = $xml->GetAttributeValue($measure,'ID');
@@ -175,11 +175,39 @@
                     $sequence_location_accession = $xml->GetAttributeValue($measure_relationship_sequencelocation,'Accession'); //Example : NC_000002.12
                     $sequence_location_start = $xml->GetAttributeValue($measure_relationship_sequencelocation,'start');
                     $sequence_location_stop = $xml->GetAttributeValue($measure_relationship_sequencelocation,'stop');
-                    $sequence_location_strand = $xml->GetAttributeValue($measure_relationship_sequencelocation,'Strand');      
-                    
+                    $sequence_location_strand = $xml->GetAttributeValue($measure_relationship_sequencelocation,'Strand');
+
                   }
-                  
-                  
+
+                  if($measure->AttributeSet != null) {
+                    foreach($measure->AttributeSet as $attributeSet) {
+                      if($attributeSet->XRef != null) {
+                        foreach($attributeSet->XRef as $xrefname) {
+                          if($xrefname != null) {
+                            $xref_id = $xml->GetAttributeValue($xrefname,"ID");
+                            $xref_db = $xml->GetAttributeValue($xrefname,"DB");
+                            $from = array("&gt;","&lt;",">","<","'");
+                            $to = array("","","","","");
+                            $xref_db_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_db)));
+                            $xref_db_low = strtolower($xref_db_escaped);
+                            $xref_id_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
+                            $xref_id_low = strtolower($xref_id_escaped);
+                            // var_dump($xref_id_low);
+                            parent::AddRDF(
+                              parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
+                              parent::triplify("clinvar:".$symbol_elementvalue, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id_low)
+                              );
+                          }
+
+                        };
+                      }
+
+                    }
+
+                  }
+
+
+
                   foreach($measure_relationship->XRef as $xrefel) {
                     $xref_id = $xml->GetAttributeValue($xrefel,"ID");
                     $xref_db = $xml->GetAttributeValue($xrefel,"DB");
@@ -191,26 +219,25 @@
                      parent::describeIndividual($xref_dbgene_low.":".$xref_id, $xref_id, parent::getVoc()."x-".$xref_dbgene_low).
                      parent::triplify("clinvar:".$symbol_elementvalue, parent::getVoc()."x-".$xref_dbgene_low, $xref_dbgene_low.":".$xref_id)
                      );
-                    
-                     
+
+
                   };
-            $traitset_node = $rcva_node->TraitSet; //TraitSet node        
+            $traitset_node = $rcva_node->TraitSet; //TraitSet node
             $traitset_type=$xml->GetAttributeValue($traitset_node,"Type");
             $traitset_id=$xml->GetAttributeValue($traitset_node,"ID");
                 $traitset_trait_node = $traitset_node->Trait; //Attention : cas où il y en a plusieurs
                 $trait_type=$xml->GetAttributeValue($traitset_trait_node,"Type");
                 $trait_id=$xml->GetAttributeValue($traitset_trait_node,"ID");
-                
+
 
                 $trait_name_node=$traitset_trait_node->Name;
                 $trait_name=$trait_name_node->ElementValue;
                 $trait_ref_array = array();
 
                 $trait_name_symbol->$traitset_trait_node->Symbol->ElementValue;
-                $file_content.="Symbole du trait : ".$trait_name_symbol;
                 $from = array("&gt;","&lt;",">","<","'");
                 $to = array("","","","","");
-                $trait_name_escaped = preg_replace("/\s/","_",str_replace($from,$to,$trait_name));
+                $trait_name_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$trait_name)));
                 $trait_name_low = strtolower($trait_name_escaped);
 
 
@@ -229,7 +256,7 @@
                   parent::triplifyString("clinvar:".$symbol_elementvalue, parent::getVoc()."cytogenetic_location", $cytogenetic_location).
                   parent::triplifyString("clinvar:".$symbol_elementvalue, parent::getVoc()."chromosome", $sequence_location_chr).
                   parent::triplifyString("clinvar:".$symbol_elementvalue, parent::getVoc()."sequence_assembly", $sequence_location_assembly).
-                  parent::triplify("clinvar:".$cva_acc,parent::getVoc()."Variant_Gene","clinvar:".$symbol_elementvalue)                 
+                  parent::triplify("clinvar:".$cva_acc,parent::getVoc()."Variant_Gene","clinvar:".$symbol_elementvalue)
                   );
 
   foreach($trait_name_node->XRef as $xrefname) {
@@ -237,9 +264,9 @@
     $xref_db = $xml->GetAttributeValue($xrefname,"DB");
     $from = array("&gt;","&lt;",">","<","'");
     $to = array("","","","","");
-    $xref_db_escaped = utf8_encode(preg_replace("/\s/","_",str_replace($from,$to,$xref_db)));
+    $xref_db_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_db)));
     $xref_db_low = strtolower($xref_db_escaped);
-    $xref_id_escaped = utf8_encode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
+    $xref_id_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
     $xref_id_low = strtolower($xref_id_escaped);
     parent::AddRDF(
       parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
@@ -248,7 +275,56 @@
 
   };
 
-  $this->WriteRDFBufferToWriteFile();
+  foreach($traitset_trait_node->XRef as $xrefname) {
+    $xref_id = $xml->GetAttributeValue($xrefname,"ID");
+    $xref_db = $xml->GetAttributeValue($xrefname,"DB");
+    $from = array("&gt;","&lt;",">","<","'");
+    $to = array("","","","","");
+    $xref_db_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_db)));
+    $xref_db_low = strtolower($xref_db_escaped);
+    $xref_id_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
+    $xref_id_low = strtolower($xref_id_escaped);
+    var_dump($xref_id_low);
+    parent::AddRDF(
+      parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
+      parent::triplify("clinvar:".$trait_name_low, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id_low)
+      );
+
+  };
+
+
+  $notr_cva_node = $xml_root->ClinVarAssertion; //Clinvar Assertion node, not the reference assertion
+    $notr_cva_measureset_node = $notr_cva_node->MeasureSet;
+    $notr_cva_measure = $notr_cva_measureset_node->Measure;
+    if($notr_cva_measure->AttributeSet != null) {
+      foreach($notr_cva_measure->AttributeSet as $attributeSet) {
+        if($attributeSet->XRef != null) {
+          foreach($attributeSet->XRef as $xrefname) {
+            if($xrefname != null) {
+              $xref_id = $xml->GetAttributeValue($xrefname,"ID");
+              $xref_db = $xml->GetAttributeValue($xrefname,"DB");
+              $from = array("&gt;","&lt;",">","<","'");
+              $to = array("","","","","");
+              $xref_db_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_db)));
+              $xref_db_low = strtolower($xref_db_escaped);
+              $xref_id_escaped = utf8_decode(preg_replace("/\s/","_",str_replace($from,$to,$xref_id)));
+              $xref_id_low = strtolower($xref_id_escaped);
+              // var_dump($xref_id_low);
+              parent::AddRDF(
+                parent::describeIndividual($xref_db_low.":".$xref_id_low, $xref_id_low, parent::getVoc()."x-".$xref_db_low).
+                parent::triplify("clinvar:".$symbol_elementvalue, parent::getVoc()."x-".$xref_db_low, $xref_db_low.":".$xref_id_low)
+                );
+            }
+
+          };
+        }
+
+      }
+
+    }
+
+
+  // $this->WriteRDFBufferToWriteFile();
   continue;
 
   }
